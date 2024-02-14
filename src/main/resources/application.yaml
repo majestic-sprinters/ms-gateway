@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: ms_route
+          uri: ???
+          predicates:
+            - Path=???
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*'
