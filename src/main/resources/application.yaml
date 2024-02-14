@@ -1,14 +1,18 @@
 spring:
+  application:
+    name: gateway-service
   cloud:
     gateway:
+      httpclient:
+        connect-timeout: 20000
       routes:
-        - id: ms_route
-          uri: ???
-          predicates:
-            - Path=???
+#        - id: example_route
+#          uri: http://google.com
+#          predicates:
+#            - Path=/v1/google
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*'
+        include: "*"
