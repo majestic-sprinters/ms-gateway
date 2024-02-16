@@ -5,6 +5,9 @@ on:
     branches:
       - 'feature/deploy'
 
+env:
+  DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_NAME }}
+
 permissions:
   contents: read
 
@@ -26,7 +29,7 @@ jobs:
         with:
           context: .
           push: true
-          tag: ${{ secrets.DOCKER_IMAGE_NAME }}
+          tag: %DOCKER_IMAGE_NAME%
 
   deploy:
     name: Deploy to target machine
@@ -37,4 +40,4 @@ jobs:
         run: docker pull ${{ secrets.DOCKER_IMAGE_NAME }}
 
       - name: Run docker container from image
-        run: docker run -d -p 8081:80 --name ms-gateway ${{ secrets.DOCKER_IMAGE_NAME }}
+        run: docker run -d -p 8081:80 --name ms-gateway %DOCKER_IMAGE_NAME%
