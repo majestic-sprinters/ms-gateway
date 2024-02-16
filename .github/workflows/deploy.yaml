@@ -1,0 +1,26 @@
+name: Deploy to vm
+
+on:
+  push:
+    branches:
+      - 'feature/deploy'
+
+env:
+  DB_URL: ${{ secrets.DB_URL }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux]
+
+    steps:
+      - name: Build docker image
+        run: docker build -t ms-gateway:latest .
+
+      - name: Run docker container from image
+        run: docker run -d -p 8081:80 --name ms-gateway ms-gateway:latest
