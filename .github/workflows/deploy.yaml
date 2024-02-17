@@ -34,12 +34,10 @@ jobs:
     runs-on: [self-hosted, master-0]
 
     steps:
-      - name: Echo test
-        run: echo 'test ${{ secrets.VM_COMPOSE_FILE }}'
-#      - name: Pull newer images from registry
-#        working-directory: ${{ secrets.VM_WORKING_DIR }}
-#        run: docker-compose -f ${{ secrets.VM_COMPOSE_FILE }} pull
-#
-#      - name: Deploy docker stack
-#        working-directory: ${{ secrets.VM_WORKING_DIR }}
-#        run: docker stack deploy -c ${{ secrets.VM_COMPOSE_FILE }} deploy
+      - name: Pull newer images from registry
+        working-directory: ${{ secrets.VM_WORKING_DIR }}
+        run: docker-compose -f ${{ secrets.VM_COMPOSE_FILE }} pull
+
+      - name: Deploy docker stack
+        working-directory: ${{ secrets.VM_WORKING_DIR }}
+        run: docker stack deploy -c ${{ secrets.VM_COMPOSE_FILE }} deploy
