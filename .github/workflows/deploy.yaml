@@ -11,6 +11,7 @@ permissions:
 jobs:
   publish:
     name: Publish image to Docker Hub
+    stage: Compile and build
     runs-on: ubuntu-latest
 
     steps:
@@ -31,6 +32,8 @@ jobs:
 
   deploy:
     name: Deploy to target machine
+    stage: Deployment
+    needs: publish
     runs-on: [self-hosted, master-0]
 
     steps:
