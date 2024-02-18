@@ -1,9 +1,9 @@
-name: Deploy to vm
+name: Build and Deploy
 
 on:
   push:
     branches:
-      - 'feature/deploy'
+      - 'main'
 
 permissions:
   contents: read
