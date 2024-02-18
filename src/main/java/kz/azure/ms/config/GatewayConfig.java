@@ -8,15 +8,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GatewayConfig {
 
-
-    //Programmatically creating a route
-    //Simple routes in the application.yml
-    //Flexible and complex routes in the customRouteLocator method
+    /**
+     * Programmatically creating a route
+     * - Simple routes in the application.yml
+     * - Complex routes in the customRouteLocator method
+     */
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route(p -> p.path("/v1/**")
+                .route(p -> p.path("/test/**")
                         .uri("https://example.org"))
                 .build();
     }
+
 }

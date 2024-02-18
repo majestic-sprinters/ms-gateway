@@ -1,4 +1,9 @@
+server:
+  port: ${MS_GATEWAY_PORT:80}
+
 spring:
+  main:
+    web-application-type: reactive
   application:
     name: gateway-service
   cloud:
@@ -6,13 +11,18 @@ spring:
       httpclient:
         connect-timeout: 20000
       routes:
-#        - id: example_route
-#          uri: http://google.com
-#          predicates:
-#            - Path=/v1/google
+        - id: ms-backend-route
+          uri: ${MS_BACKEND_URI:http://localhost:8080}
+          predicates:
+            - Path=/api/v1/**
+          filters:
+            - RewritePath=/api/v1/(?<segment>.*), /${segment}
 
 management:
+  endpoint:
+    gateway:
+      enabled: true
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: gateway
