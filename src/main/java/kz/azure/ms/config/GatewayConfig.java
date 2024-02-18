@@ -16,8 +16,10 @@ public class GatewayConfig {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route(p -> p.path("/v1/example")
-                        .uri("https://example.org"))
+//                .route("ms-backend-route", r -> r.path("/ms-backend/**")
+//                        .filters(f -> f.rewritePath("/ms-backend/(?<remaining>.*)", "/${remaining}"))
+//                        .uri("http://localhost:8080"))
                 .build();
     }
+
 }

@@ -10,6 +10,13 @@ spring:
     gateway:
       httpclient:
         connect-timeout: 20000
+      routes:
+        - id: ms-backend-route
+          uri: ${MS_BACKEND_URI:http://localhost:8080}
+          predicates:
+            - Path=/ms-backend/**
+          filters:
+            - RewritePath=/ms-backend/(?<segment>.*), /${segment}
 
 management:
   endpoint:
