@@ -41,4 +41,4 @@ jobs:
 
       - name: Deploy docker stack
         working-directory: ${{ secrets.VM_WORKING_DIR }}
-        run: docker stack deploy -c ${{ secrets.VM_COMPOSE_FILE }} deploy
+        run: docker stack deploy -c ${{ secrets.VM_COMPOSE_FILE }} ms-deploy
