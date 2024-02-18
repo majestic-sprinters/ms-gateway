@@ -37,7 +37,7 @@ jobs:
     steps:
       - name: Pull newer images from registry
         working-directory: ${{ secrets.VM_WORKING_DIR }}
-        run: docker-compose -f ${{ secrets.VM_COMPOSE_FILE }} pull
+        run: docker-compose -f ${{ secrets.VM_COMPOSE_FILE }} pull ms-gateway
 
       - name: Deploy docker stack
         working-directory: ${{ secrets.VM_WORKING_DIR }}
