@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   publish:
-    name: Publish image to Docker Hub
+    name: Build and publish to registry
     runs-on: ubuntu-latest
 
     steps:
