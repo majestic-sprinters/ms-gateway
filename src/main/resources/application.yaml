@@ -15,8 +15,6 @@ spring:
           uri: ${MS_BACKEND_URI:http://localhost:8080}
           predicates:
             - Path=/api/v1/**
-          filters:
-            - RewritePath=/api/v1/(?<segment>.*), /${segment}
 
 management:
   endpoint:
