@@ -15,6 +15,12 @@ spring:
           uri: ${MS_BACKEND_URI:http://localhost:8080}
           predicates:
             - Path=/api/v1/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders: "*"
+            allowedMethods: "*"
 
 management:
   endpoint:
