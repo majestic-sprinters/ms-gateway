@@ -1,6 +1,10 @@
 server:
   port: ${MS_GATEWAY_PORT:80}
 
+auth:
+  service:
+    uri: ${AUTH_SERVICE_URI:http://localhost:8090}
+
 spring:
   main:
     web-application-type: reactive
