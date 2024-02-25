@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -28,8 +29,16 @@ public class AuthGlobalFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String username = exchange.getRequest().getHeaders().getFirst("username");
-        String password = exchange.getRequest().getHeaders().getFirst("password");
+        String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
+        String[] headerCredentials = Objects.requireNonNull(authHeader).split("\\|");
+
+        if (headerCredentials.length != 2) {
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
+        }
+
+        String username = headerCredentials[0];
+        String password = headerCredentials[1];
 
         if (username == null || password == null) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
@@ -47,14 +56,7 @@ public class AuthGlobalFilter implements GlobalFilter {
                 .retrieve()
                 .toBodilessEntity()
                 .flatMap(response -> {
-                    if (response.getStatusCode() == HttpStatus.OK) {
-                        // Mutate the ServerWebExchange in place
-                        exchange.mutate()
-                                .request(exchange.getRequest().mutate()
-                                        .header("username", username)
-                                        .header("password", password)
-                                        .build())
-                                .build();
+                    if (response.getStatusCode().is2xxSuccessful()) {
                         return chain.filter(exchange);
                     } else {
                         exchange.getResponse().setStatusCode(response.getStatusCode());
