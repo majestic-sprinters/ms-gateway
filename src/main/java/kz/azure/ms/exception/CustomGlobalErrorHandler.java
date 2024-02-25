@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.PrematureCloseException;
 
 import java.nio.charset.StandardCharsets;
 
@@ -29,6 +30,10 @@ public class CustomGlobalErrorHandler implements ErrorWebExceptionHandler {
                 status = HttpStatus.UNAUTHORIZED; // 401 Unauthorized
                 errorMessage = responseStatusException.getMessage();
             }
+        }
+
+        if (ex instanceof PrematureCloseException) {
+            status = HttpStatus.UNAUTHORIZED;
         }
 
         String body = "{\"message\":\"" + status + "\", \"error\":\"" + errorMessage + "\"}"; // Include the error message in the response body
