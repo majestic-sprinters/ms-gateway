@@ -41,3 +41,7 @@ management:
     web:
       exposure:
         include: gateway
+
+settings:
+  auth:
+    enabled: ${MS_AUTH_ENABLED:true}

@@ -24,12 +24,19 @@ public class AuthGlobalFilter implements GlobalFilter {
     @Value("${auth.service.uri}")
     private String authServiceUri;
 
+    @Value("${settings.auth.enabled}")
+    private boolean authEnabled;
+
     public AuthGlobalFilter(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder;
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        if (!authEnabled) {
+            return chain.filter(exchange);
+        }
+
         String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
         String[] headerCredentials = Objects.requireNonNull(authHeader).split("\\|");
 
