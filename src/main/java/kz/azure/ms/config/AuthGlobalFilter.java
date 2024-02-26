@@ -6,6 +6,7 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
@@ -23,12 +24,19 @@ public class AuthGlobalFilter implements GlobalFilter {
     @Value("${auth.service.uri}")
     private String authServiceUri;
 
+    @Value("${settings.auth.enabled}")
+    private boolean authEnabled;
+
     public AuthGlobalFilter(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder;
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        if (!authEnabled) {
+            return chain.filter(exchange);
+        }
+
         String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
         String[] headerCredentials = Objects.requireNonNull(authHeader).split("\\|");
 
@@ -54,14 +62,13 @@ public class AuthGlobalFilter implements GlobalFilter {
                 .uri(authServiceUri + "/api/v1/auth/login")
                 .body(Mono.just(credentials), Map.class)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, response -> Mono.error(new RuntimeException("Wrong username or password")))
+                .onStatus(HttpStatusCode::is5xxServerError, response -> Mono.error(new RuntimeException("Auth failed")))
                 .toBodilessEntity()
-                .flatMap(response -> {
-                    if (response.getStatusCode().is2xxSuccessful()) {
-                        return chain.filter(exchange);
-                    } else {
-                        exchange.getResponse().setStatusCode(response.getStatusCode());
-                        return exchange.getResponse().setComplete();
-                    }
+                .flatMap(response -> chain.filter(exchange))
+                .onErrorResume(e -> {
+                    exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+                    return exchange.getResponse().setComplete();
                 });
     }
 }
